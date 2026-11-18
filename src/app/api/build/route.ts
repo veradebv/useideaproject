@@ -26,7 +26,6 @@ export async function POST(req: Request) {
             status: 'done',
           });
           send({ agent: 'Validator', message: 'Interactive preview hydrated.', status: 'done', previewUrl: '' });
-          controller.close();
           return;
         }
 
@@ -72,7 +71,11 @@ export async function POST(req: Request) {
           status: 'error',
         });
       } finally {
-        controller.close();
+        try {
+          controller.close();
+        } catch {
+          // Stream already closed by client disconnect
+        }
       }
     },
   });

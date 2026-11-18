@@ -32,6 +32,14 @@ export function CreationMenuStep({
   isGenerating,
   onGenerate,
 }: CreationMenuStepProps) {
+  const handleHexChange = (raw: string) => {
+    const cleaned = raw.replace(/[^#0-9A-Fa-f]/g, '').slice(0, 7);
+    const normalized = cleaned.startsWith('#') ? cleaned : `#${cleaned}`;
+    setBrandColor(normalized.toUpperCase());
+  };
+
+  const isValidHex = /^#[0-9A-F]{6}$/i.test(brandColor) || /^#[0-9A-F]{3}$/i.test(brandColor);
+
   return (
     <div className="p-5 space-y-6">
       <div>
@@ -94,19 +102,36 @@ export function CreationMenuStep({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-          <span className="text-[11px] font-medium text-slate-400 block mb-2">Primary Brand Color</span>
-          <div className="flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+          <span className="text-[11px] font-medium text-slate-400 block">Primary Brand Color</span>
+          <div className="flex items-center gap-1.5">
             {SWATCHES.map((hex) => (
               <button
                 key={hex}
+                type="button"
                 onClick={() => setBrandColor(hex)}
                 className={`w-5 h-5 rounded-full transition-transform ${
-                  brandColor === hex ? 'scale-125 ring-2 ring-white' : 'opacity-75 hover:opacity-100'
+                  brandColor.toUpperCase() === hex.toUpperCase()
+                    ? 'scale-110 ring-2 ring-white'
+                    : 'opacity-75 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: hex }}
               />
             ))}
+          </div>
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 focus-within:border-indigo-500 rounded-lg px-2 py-1">
+            <span
+              className="w-3.5 h-3.5 rounded-full shrink-0 border border-slate-700"
+              style={{ backgroundColor: isValidHex ? brandColor : '#2563EB' }}
+            />
+            <input
+              type="text"
+              value={brandColor}
+              onChange={(e) => handleHexChange(e.target.value)}
+              placeholder="#059669"
+              maxLength={7}
+              className="w-full bg-transparent text-[11px] font-mono text-white uppercase focus:outline-none"
+            />
           </div>
         </div>
 
@@ -131,7 +156,7 @@ export function CreationMenuStep({
 
       <button
         onClick={onGenerate}
-        disabled={isGenerating || !ideaPrompt.trim()}
+        disabled={isGenerating || !ideaPrompt.trim() || !isValidHex}
         className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 transition"
       >
         {isGenerating ? (

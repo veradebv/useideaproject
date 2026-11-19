@@ -8,6 +8,7 @@ import { CreationMenuStep } from '@/components/studio/CreationMenuStep';
 import { BlueprintEditorStep } from '@/components/studio/BlueprintEditorStep';
 import { AgentWorkspaceStep } from '@/components/studio/AgentWorkspaceStep';
 import { LiveSitePreview } from '@/components/preview/LiveSitePreview';
+import { PublishModal } from '@/components/studio/PublishModal';
 
 export default function IdeaProjectStudioPage() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -21,6 +22,7 @@ export default function IdeaProjectStudioPage() {
   const [isBuildingSite, setIsBuildingSite] = useState(false);
   const [buildLogs, setBuildLogs] = useState<BuildLogEntry[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [viewport, setViewport] = useState<'desktop' | 'mobile'>('desktop');
   const [sandboxPreviewUrl, setSandboxPreviewUrl] = useState<string>('');
   const [sandboxId, setSandboxId] = useState<string | undefined>(undefined);
@@ -136,7 +138,7 @@ export default function IdeaProjectStudioPage() {
         blueprint={blueprint}
         viewport={viewport}
         setViewport={setViewport}
-        onPublish={() => alert(`Ready to deploy ${blueprint?.projectName} to *.useideaproject.com!`)}
+        onPublish={() => setIsPublishOpen(true)}
       />
 
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
@@ -189,6 +191,13 @@ export default function IdeaProjectStudioPage() {
           />
         </section>
       </main>
-    </div>
+          {blueprint && (
+        <PublishModal
+          isOpen={isPublishOpen}
+          onClose={() => setIsPublishOpen(false)}
+          blueprint={blueprint}
+        />
+      )}
+</div>
   );
 }

@@ -26,7 +26,7 @@ const BuilderGraphState = Annotation.Root({
 
 function getCodingModel() {
   return new ChatGoogleGenerativeAI({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-3.8-flash',
     temperature: 0.2,
     apiKey: process.env.GEMINI_API_KEY,
   }).withStructuredOutput(GeneratedFilesSchema);
